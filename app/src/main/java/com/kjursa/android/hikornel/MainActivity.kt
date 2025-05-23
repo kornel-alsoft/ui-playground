@@ -18,6 +18,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.kjursa.android.hikornel.app.presentation.main.MainScreen
 import com.kjursa.android.hikornel.arch.ComposableScreenFactory
 import com.kjursa.android.hikornel.di.WelcomeMessageProvider
 import com.kjursa.android.hikornel.ui.theme.HiKornelTheme
@@ -41,19 +42,11 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @AndroidEntryPoint
-class MainActivity : ComponentActivity() {
+internal class MainActivity : ComponentActivity() {
+
 
     @Inject
-    lateinit var messageProvider: WelcomeMessageProvider
-
-    @Inject
-    lateinit var navigationManager: AppNavigationManager
-
-    @Inject
-    lateinit var homeViewModelFactory: HomeViewModelFactory
-
-    @Inject
-    lateinit var loginViewModelFactory: LoginViewModelFactory
+    lateinit var mainScreen: MainScreen
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,11 +56,9 @@ class MainActivity : ComponentActivity() {
             HiKornelTheme {
                 Scaffold { padding ->
                     Column(modifier = Modifier.padding(padding)) {
-                        Text(
-                            modifier = Modifier.padding(16.dp),
-                            text = messageProvider.message()
-                        )
-                        MyAppNavHost(navigationManager)
+
+                        mainScreen.Screen()
+
                     }
                 }
             }
@@ -75,65 +66,9 @@ class MainActivity : ComponentActivity() {
     }
 
 
-    @Composable
-    fun MyAppNavHost(navigation: AppNavigationManager) {
-        val navController: NavHostController = rememberNavController()
-        navigation.controller = navController
 
-        NavHost(navController = navController, startDestination = NavScreen.Login.route) {
-            composable(NavScreen.Login.route) {
-                LoginScreen()
-            }
-            composable(
-                route = NavScreen.Home.route,
-                arguments = listOf(userNameNavArgument)
-            ) {
-                HomeScreen()
-            }
-            composable(
-                route = NavScreen.Settings.route,
-                arguments = listOf(userNameNavArgument)
-            ) {
-                SettingsScreen(navigation)
-            }
-        }
-    }
 
-    private val userNameNavArgument = navArgument("userName") {
-        type = NavType.StringType
-    }
 
-    @Composable
-    fun LoginScreen() {
-        ComposableScreenFactory<LoginViewModel, LoginViewState, LoginInteraction>(
-            factory = { loginViewModelFactory }
-        ) { state, inter ->
-            LoginScreenContent(state, inter)
-        }
-    }
-
-    @Composable
-    fun HomeScreen() {
-        val homeFactory = remember { homeViewModelFactory }
-
-        ComposableScreenFactory<HomeViewModel, HomeViewState, HomeInteraction>(
-            factory = { homeFactory }
-        ) { state, inter ->
-            HomeScreenContent(state, inter)
-        }
-
-    }
-
-    @Composable
-    fun SettingsScreen(navigation: NavigationManager) {
-        val settingsFactory = remember { SettingsViewModelFactory(navigationManager = navigation) }
-
-        ComposableScreenFactory<SettingsViewModel, SettingsViewState, SettingsInteraction>(
-            factory = { settingsFactory }
-        ) { state, inter ->
-            SettingsScreenContent(state, inter)
-        }
-    }
 }
 
 internal sealed class NavScreen(val route: String) {

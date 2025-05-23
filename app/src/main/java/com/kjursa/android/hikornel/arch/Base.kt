@@ -6,16 +6,20 @@ import android.os.Parcelable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlin.reflect.KClass
 
 interface BaseViewState : Parcelable
 
@@ -64,6 +68,32 @@ inline fun <reified VM, S : BaseViewState, I : BaseInteraction> ComposableScreen
     val interaction = vm as I
     content(state, interaction)
 }
+
+abstract class BaseScreen<
+        S : BaseViewState,
+        I : BaseInteraction,
+        VM : BaseViewModel<S, I>
+        >(
+    private val viewModelFactory: ViewModelProvider.Factory,
+    private val viewModelClass: KClass<VM>
+) {
+    @Composable
+    fun Screen() {
+        val owner = LocalViewModelStoreOwner.current
+            ?: error("No ViewModelStoreOwner was provided")
+        val viewModel: VM = remember(viewModelFactory) {
+            ViewModelProvider(owner, viewModelFactory)[viewModelClass.java]
+        }
+
+        val viewState by viewModel.viewStateFlow.collectAsStateWithLifecycle()
+
+        Content(viewState = viewState, interaction = viewModel as I)
+    }
+
+    @Composable
+    protected abstract fun Content(viewState: S, interaction: I)
+}
+
 
 interface ViewStateProvider<T : BaseViewState> {
     fun get(): T
