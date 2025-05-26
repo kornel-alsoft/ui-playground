@@ -1,5 +1,6 @@
 package com.kjursa.android.hikornel.app.presentation.main
 
+import android.util.Log
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.Animatable
@@ -26,6 +27,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,9 +47,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.kjursa.android.hikornel.NavigationManager
 import com.kjursa.android.hikornel.app.presentation.main.contact.ContactScreen
@@ -128,7 +132,9 @@ internal class MainScreen @Inject constructor(
     @Composable
     fun MainScreenContent(state: MainViewState, interaction: MainInteraction) {
 
-        var route by remember { mutableStateOf("home") }
+        val navController: NavHostController = rememberNavController()
+        val navBackStackEntry by navController.currentBackStackEntryAsState()
+        val route = navBackStackEntry?.destination?.route ?: "home"
         var prevRoute by remember { mutableStateOf("home") }
         val avatarProgress by animateFloatAsState(
             targetValue = if (route == "home") 1f else 0f,
@@ -138,7 +144,7 @@ internal class MainScreen @Inject constructor(
         Box(modifier = Modifier.fillMaxSize()) {
 
 
-            val navController: NavHostController = rememberNavController()
+
             Box(modifier = Modifier
                 .fillMaxSize()
                 .padding(top = 64.dp)) {
@@ -153,13 +159,13 @@ internal class MainScreen @Inject constructor(
                     composable(
                         route = "profile",
                         enterTransition = {
-                            when (prevRoute) {
+                            when (initialState.destination.route) {
                                 "home" -> slideInRight()
                                 else -> slideInLeft()
                             }
                         },
                         exitTransition = {
-                            when (route) {
+                            when (targetState.destination.route) {
                                 "home" -> slideOutRight()
                                 else -> slideOutLeft()
                             }
@@ -182,10 +188,16 @@ internal class MainScreen @Inject constructor(
             NavigationContent(
                 modifier = Modifier.align(Alignment.BottomCenter),
                 route = route,
+                prevRoute = prevRoute,
             ) { selectedRoute ->
                 prevRoute = route
-                route = selectedRoute
-                navController.navigate(selectedRoute)
+                navController.navigate(selectedRoute) {
+                    launchSingleTop = true
+                    restoreState = true
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                    }
+                }
             }
         }
     }
@@ -232,7 +244,7 @@ fun Toolbar(progress: Float) {
 }
 
 @Composable
-fun NavigationContent(modifier: Modifier, route: String, onClick: (String) -> Unit) {
+fun NavigationContent(modifier: Modifier, route: String, prevRoute: String, onClick: (String) -> Unit) {
     Box(
         modifier = modifier
             .padding(8.dp)
@@ -248,33 +260,29 @@ fun NavigationContent(modifier: Modifier, route: String, onClick: (String) -> Un
     ) {
         val highlightStart = remember { Animatable(0f) }
         val highlightEnd = remember { Animatable(0.333f) }
-        val scope = rememberCoroutineScope()
         IconSelection(highlightStart.value, highlightEnd.value)
+        LaunchedEffect(route) {
+            val isToRight = when (route) {
+                "contact" -> true
+                "profile" -> prevRoute == "home"
+                else -> false
+            }
+            val (start, end) = when (route) {
+                "home" -> 0f to 1 / 3f
+                "profile" -> 1 / 3f to 2 / 3f
+                else -> 2 / 3f to 1f
+            }
+            if (isToRight) {
+                highlightEnd.animateTo(end, spring())
+                highlightStart.animateTo(start, spring())
+            } else {
+                highlightStart.animateTo(start, spring())
+                highlightEnd.animateTo(end, spring())
+            }
+        }
         NavigationIcons(
             route,
-            onClick = { currentRoute ->
-                onClick(currentRoute)
-                scope.launch {
-                    val lastRoute = route
-                    val isToRight = when (currentRoute) {
-                        "contact" -> true
-                        "profile" -> lastRoute == "home"
-                        else -> false
-                    }
-                    val (start, end) = when (currentRoute) {
-                        "home" -> 0f to 1 / 3f
-                        "profile" -> 1 / 3f to 2 / 3f
-                        else -> 2 / 3f to 1f
-                    }
-                    if (isToRight) {
-                        highlightEnd.animateTo(end, spring())
-                        highlightStart.animateTo(start, spring())
-                    } else {
-                        highlightStart.animateTo(start, spring())
-                        highlightEnd.animateTo(end, spring())
-                    }
-                }
-            }
+            onClick = { currentRoute -> onClick(currentRoute) }
         )
     }
 }
