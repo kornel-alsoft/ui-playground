@@ -83,12 +83,24 @@ class ProfileViewModelFactory @Inject constructor(
 @Composable
 fun ProfileScreenContent(state: ProfileViewState, interaction: ProfileInteraction) {
     Column(
-        modifier = Modifier.fillMaxSize().background(Pink40),
+        modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
         Spacer(modifier = Modifier.weight(1f))
+        Text(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            text = "${state.name} screen"
+        )
+        Text(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            text = "${state.name} screen"
+        )
+        Text(
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            text = "${state.name} screen"
+        )
         Text(
             modifier = Modifier.align(Alignment.CenterHorizontally),
             text = "${state.name} screen"

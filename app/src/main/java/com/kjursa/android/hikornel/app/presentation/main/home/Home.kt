@@ -93,7 +93,6 @@ fun HomeScreenContent(state: HomeViewState, interaction: HomeInteraction) {
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(PurpleGrey40)
             .padding(horizontal = 16.dp),
     ) {
         Spacer(modifier = Modifier.size(16.dp))

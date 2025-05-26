@@ -1,16 +1,18 @@
 package com.kjursa.android.hikornel.app.presentation.main
 
-import android.R.style
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideIn
+import androidx.compose.animation.slideOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -32,15 +34,21 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.kjursa.android.hikornel.NavigationManager
 import com.kjursa.android.hikornel.app.presentation.main.contact.ContactScreen
 import com.kjursa.android.hikornel.app.presentation.main.home.HomeScreen
@@ -119,47 +127,89 @@ internal class MainScreen @Inject constructor(
 
     @Composable
     fun MainScreenContent(state: MainViewState, interaction: MainInteraction) {
-//        val navController: NavHostController = rememberNavController()
-//        Box(modifier = Modifier.fillMaxSize()) {
-//            NavHost(navController = navController, startDestination = "home") {
-//                composable("home") {
-//                    homeScreen.Screen()
-//                }
-//                composable("profile") {
-//                    profileScreen.Screen()
-//                }
-//                composable("contact") {
-//                    contactScreen.Screen()
-//                }
-//            }
+
         var route by remember { mutableStateOf("home") }
+        var prevRoute by remember { mutableStateOf("home") }
         val avatarProgress by animateFloatAsState(
             targetValue = if (route == "home") 1f else 0f,
-            animationSpec = spring() // tween(durationMillis = 600)
+            animationSpec = tween()
         )
 
         Box(modifier = Modifier.fillMaxSize()) {
 
+
+            val navController: NavHostController = rememberNavController()
             Box(modifier = Modifier
                 .fillMaxSize()
                 .padding(top = 64.dp)) {
-                when (route) {
-                    "home" -> homeScreen.Screen()
-                    "profile" -> profileScreen.Screen()
-                    "contact" -> contactScreen.Screen()
+                NavHost(navController = navController, startDestination = "home") {
+                    composable(
+                        "home",
+                        enterTransition = { slideInLeft() },
+                        exitTransition = { slideOutLeft() }
+                    ) {
+                        homeScreen.Screen()
+                    }
+                    composable(
+                        route = "profile",
+                        enterTransition = {
+                            when (prevRoute) {
+                                "home" -> slideInRight()
+                                else -> slideInLeft()
+                            }
+                        },
+                        exitTransition = {
+                            when (route) {
+                                "home" -> slideOutRight()
+                                else -> slideOutLeft()
+                            }
+                        }
+                    ) {
+                        profileScreen.Screen()
+                    }
+                    composable(
+                        route = "contact",
+                        enterTransition = { slideInRight() },
+                        exitTransition = { slideOutRight() }
+                    ) {
+                        contactScreen.Screen()
+                    }
                 }
             }
+
             Toolbar(avatarProgress)
 
             NavigationContent(
                 modifier = Modifier.align(Alignment.BottomCenter),
                 route = route,
-            ) {
-                route = it
+            ) { selectedRoute ->
+                prevRoute = route
+                route = selectedRoute
+                navController.navigate(selectedRoute)
             }
         }
     }
 }
+
+private fun slideOutLeft(): ExitTransition =
+    slideOut(
+        targetOffset = { fullSize -> IntOffset(-fullSize.width / 3, 0) }
+    ) + fadeOut()
+
+private fun slideOutRight(): ExitTransition =
+    slideOut(
+        targetOffset = { fullSize -> IntOffset(fullSize.width / 3, 0) }
+    ) + fadeOut()
+
+private fun slideInLeft(): EnterTransition =
+    slideIn(
+        initialOffset = { fullSize -> IntOffset(-fullSize.width / 3, 0) }
+    ) + fadeIn()
+
+private fun slideInRight(): EnterTransition =
+    slideIn(
+        initialOffset = { fullSize -> IntOffset(fullSize.width / 3, 0) }
+    ) + fadeIn()
 
 @Composable
 fun Toolbar(progress: Float) {
@@ -189,7 +239,9 @@ fun NavigationContent(modifier: Modifier, route: String, onClick: (String) -> Un
             .height(48.dp)
             .width(224.dp)
             .background(
-                color = Color.DarkGray,
+                brush = Brush.verticalGradient(
+                    colors = listOf(Color.DarkGray, Color(0xFF555555))
+                ),
                 shape = RoundedCornerShape(24.dp)
             )
             .padding(4.dp),
@@ -210,9 +262,9 @@ fun NavigationContent(modifier: Modifier, route: String, onClick: (String) -> Un
                         else -> false
                     }
                     val (start, end) = when (currentRoute) {
-                        "home" -> 0f to 1/3f
-                        "profile" -> 1/3f to 2/3f
-                        else -> 2/3f to 1f
+                        "home" -> 0f to 1 / 3f
+                        "profile" -> 1 / 3f to 2 / 3f
+                        else -> 2 / 3f to 1f
                     }
                     if (isToRight) {
                         highlightEnd.animateTo(end, spring())
