@@ -18,6 +18,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.kjursa.android.hikornel.app.presentation.app.settings.AppScreen
 import com.kjursa.android.hikornel.app.presentation.main.MainScreen
 import com.kjursa.android.hikornel.arch.ComposableScreenFactory
 import com.kjursa.android.hikornel.di.WelcomeMessageProvider
@@ -46,7 +47,7 @@ internal class MainActivity : ComponentActivity() {
 
 
     @Inject
-    lateinit var mainScreen: MainScreen
+    lateinit var appScreen: AppScreen
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -57,7 +58,7 @@ internal class MainActivity : ComponentActivity() {
                 Scaffold { padding ->
                     Column(modifier = Modifier.padding(padding)) {
 
-                        mainScreen.Screen()
+                        appScreen.Screen()
 
                     }
                 }

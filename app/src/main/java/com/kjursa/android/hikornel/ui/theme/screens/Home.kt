@@ -70,8 +70,6 @@ class HomeViewModelFactory @Inject constructor(
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
-        Log.d("TEST_KORNEL", "creating HomeViewModel")
-        Log.d("TEST_KORNEL", "navigation manager -> ${navigationManager.hashCode()}")
         if (modelClass.isAssignableFrom(HomeViewModel::class.java)) {
             val savedState = extras.createSavedStateHandle()
             val userName = savedState.get<String>("userName")
