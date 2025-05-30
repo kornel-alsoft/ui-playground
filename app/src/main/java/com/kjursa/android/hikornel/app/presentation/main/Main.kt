@@ -1,12 +1,9 @@
 package com.kjursa.android.hikornel.app.presentation.main
 
-import android.util.Log
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -29,12 +26,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -70,9 +64,10 @@ import com.kjursa.android.hikornel.ui.theme.icons.MyIconPack
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
 import com.kjursa.android.hikornel.R
-import com.kjursa.android.hikornel.app.presentation.app.settings.AppNavigation
+import com.kjursa.android.hikornel.ui.theme.icons.myiconpack.Chat
 import com.kjursa.android.hikornel.ui.theme.icons.myiconpack.Email
 import com.kjursa.android.hikornel.ui.theme.icons.myiconpack.Home
+import com.kjursa.android.hikornel.ui.theme.icons.myiconpack.Settings
 import com.kjursa.android.hikornel.ui.theme.icons.myiconpack.Text
 
 @Parcelize
@@ -84,6 +79,8 @@ data class MainViewState(
 interface MainInteraction : BaseInteraction {
     fun onClickedScreen(name: String)
     fun onEnterScreen(name: String)
+    fun onSettingsClicked()
+    fun onChatClicked()
 }
 
 
@@ -101,6 +98,14 @@ internal class MainViewModel(
     override fun onEnterScreen(name: String) {
         updateState { copy(prevRoute = name) }
     }
+
+    override fun onSettingsClicked() {
+        navigationManager.navigateToSettings()
+    }
+
+    override fun onChatClicked() {
+        navigationManager.navigateToChat()
+    }
 }
 
 class MainViewModelFactory @Inject constructor(
@@ -113,8 +118,8 @@ class MainViewModelFactory @Inject constructor(
             val savedState = extras.createSavedStateHandle()
             val initial = MainViewState(name = "Main")
             return MainViewModel(
-                navigationManager,
-                viewStateProvider = viewStateProvider(initial, savedState)
+                viewStateProvider = viewStateProvider(initial, savedState),
+                navigationManager = navigationManager
             ) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
@@ -144,9 +149,6 @@ internal class MainScreen @Inject constructor(
         val navController: NavHostController = rememberNavController()
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val route = navBackStackEntry?.destination?.route ?: ""
-//        var prevRoute by remember { mutableStateOf("home") }
-//        Log.d("TEST_KORNEL", "route -> $route")
-//        Log.d("TEST_KORNEL", "prev from VS -> ${state.prevRoute}")
         val avatarProgress by animateFloatAsState(
             targetValue = when (route) {
                 "" -> if (state.prevRoute == "home") 1f else 0f
@@ -171,7 +173,6 @@ internal class MainScreen @Inject constructor(
                             if (state.prevRoute != "home") {
                                 interaction.onEnterScreen("home")
                             }
-                            interaction.onEnterScreen("home")
                             slideInLeft()
 
                         },
@@ -214,9 +215,11 @@ internal class MainScreen @Inject constructor(
                 }
             }
 
-            Toolbar(avatarProgress) {
-                AppNavigation.navigateToSettings()
-            }
+            Toolbar(
+                avatarProgress,
+                onSettingsClicked = interaction::onSettingsClicked,
+                onChatClicked = interaction::onChatClicked
+            )
 
             NavigationContent(
                 modifier = Modifier.align(Alignment.BottomCenter),
@@ -255,25 +258,42 @@ private fun slideInRight(): EnterTransition =
     ) + fadeIn()
 
 @Composable
-fun Toolbar(progress: Float, onClick: () -> Unit) {
+fun Toolbar(
+    progress: Float,
+    onSettingsClicked: () -> Unit,
+    onChatClicked: () -> Unit,
+) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(64.dp)
             .background(Color.Black)
     ) {
-        Icon(
-            imageVector = MyIconPack.Text,
-            tint = Color.White,
-            contentDescription = null,
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .clip(RoundedCornerShape(24.dp))
-                .clickable { onClick() }
-                .padding(horizontal = 16.dp)
-                .size(40.dp)
-                .padding(10.dp)
-        )
+        Row(modifier = Modifier.align(Alignment.CenterEnd)) {
+            Icon(
+                imageVector = MyIconPack.Settings,
+                tint = Color.White,
+                contentDescription = null,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(24.dp))
+                    .clickable { onSettingsClicked() }
+                    .padding(horizontal = 2.dp)
+                    .size(40.dp)
+                    .padding(10.dp)
+            )
+
+            Icon(
+                imageVector = MyIconPack.Chat,
+                tint = Color.White,
+                contentDescription = null,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(24.dp))
+                    .clickable { onChatClicked() }
+                    .padding(horizontal = 2.dp)
+                    .size(40.dp)
+                    .padding(10.dp)
+            )
+        }
     }
     Icon(
         painter = painterResource(id = R.drawable.cropped_image),
@@ -304,7 +324,7 @@ fun NavigationContent(modifier: Modifier, route: String, onClick: (String) -> Un
     ) {
 
         val highlightStart = remember { Animatable(0f) }
-        val highlightEnd = remember { Animatable(0.333f) }
+        val highlightEnd = remember { Animatable(1f) }
         IconSelection(highlightStart.value, highlightEnd.value)
         var isFirstTime by remember { mutableStateOf(true) }
 
@@ -312,9 +332,9 @@ fun NavigationContent(modifier: Modifier, route: String, onClick: (String) -> Un
 
         LaunchedEffect(route) {
             val (start, end) = when (route) {
-                "home" -> 0f to 1 / 3f
-                "profile" -> 1 / 3f to 2 / 3f
-                else -> 2 / 3f to 1f
+                "home" -> 0f to 1f
+                "profile" -> 1f to 2f
+                else -> 2f to 3f
             }
 
             if (start > highlightStart.value) {
@@ -349,8 +369,8 @@ internal fun IconSelection(from: Float, to: Float) {
     val width = to - from
     Box(
         modifier = Modifier
-            .width(216.dp.times(width))
-            .offset(x = 216.dp.times(from))
+            .width(216.dp.times(width / 3f))
+            .offset(x = 216.dp.times(from / 3f))
             .fillMaxHeight()
             .background(Color.LightGray, RoundedCornerShape(24.dp))
     )

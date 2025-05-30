@@ -34,8 +34,8 @@ import com.kjursa.android.hikornel.ui.theme.icons.myiconpack.Moon
 import com.kjursa.android.hikornel.ui.theme.icons.myiconpack.Sun
 import com.kjursa.android.hikornel.ui.theme.icons.myiconpack.Volumeoff
 import com.kjursa.android.hikornel.ui.theme.icons.myiconpack.Volumeon
-import com.kjursa.android.hikornel.ui.theme.widget.AnimatedIconSwitch
-import com.kjursa.android.hikornel.ui.theme.widget.rememberAnimatedIconSwitchStyle
+import com.kjursa.android.hikornel.app.presentation.widget.AnimatedIconSwitch
+import com.kjursa.android.hikornel.app.presentation.widget.rememberAnimatedIconSwitchStyle
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
 import kotlin.Int
@@ -63,7 +63,7 @@ internal class LoginViewModel(
 ), LoginInteraction {
 
     override fun onLoginClicked() {
-        navigationManager.navigateToHome(viewState.username)
+//        navigationManager.navigateToHome(viewState.username)
     }
 
     override fun onUsernameChanged(name: String) {

@@ -7,37 +7,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
-import com.kjursa.android.hikornel.app.presentation.app.settings.AppScreen
-import com.kjursa.android.hikornel.app.presentation.main.MainScreen
-import com.kjursa.android.hikornel.arch.ComposableScreenFactory
-import com.kjursa.android.hikornel.di.WelcomeMessageProvider
+import com.kjursa.android.hikornel.app.presentation.app.AppScreen
 import com.kjursa.android.hikornel.ui.theme.HiKornelTheme
-import com.kjursa.android.hikornel.ui.theme.screens.LoginInteraction
-import com.kjursa.android.hikornel.ui.theme.screens.LoginScreenContent
-import com.kjursa.android.hikornel.ui.theme.screens.LoginViewModel
-import com.kjursa.android.hikornel.ui.theme.screens.LoginViewModelFactory
-import com.kjursa.android.hikornel.ui.theme.screens.LoginViewState
-import com.kjursa.android.hikornel.ui.theme.screens.HomeInteraction
-import com.kjursa.android.hikornel.ui.theme.screens.HomeScreenContent
-import com.kjursa.android.hikornel.ui.theme.screens.HomeViewModel
-import com.kjursa.android.hikornel.ui.theme.screens.HomeViewModelFactory
-import com.kjursa.android.hikornel.ui.theme.screens.HomeViewState
-import com.kjursa.android.hikornel.ui.theme.screens.SettingsInteraction
-import com.kjursa.android.hikornel.ui.theme.screens.SettingsScreenContent
-import com.kjursa.android.hikornel.ui.theme.screens.SettingsViewModel
-import com.kjursa.android.hikornel.ui.theme.screens.SettingsViewModelFactory
-import com.kjursa.android.hikornel.ui.theme.screens.SettingsViewState
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -72,45 +45,36 @@ internal class MainActivity : ComponentActivity() {
 
 }
 
-internal sealed class NavScreen(val route: String) {
-    open fun build(param: String): String = route
+internal object AppRoute {
+    const val MAIN = "main"
+    const val SETTINGS = "settings"
+    const val CHAT = "chat"
 
-    data object Login : NavScreen("login")
-
-    data object Home : NavScreen("home/{userName}") {
-        override fun build(param: String): String = "home/$param"
-    }
-
-    data object Settings : NavScreen("settings/{userName}") {
-        override fun build(param: String): String = "settings/$param"
-    }
 }
 
 interface NavigationManager {
-    fun navigateToHome(userName: String)
-    fun navigateToLogin()
-    fun navigateBack()
-    fun navigateToSettings(userName: String)
+    fun navigateToChat()
+    fun navigateToSettings()
+}
+
+interface NavigationInitializer {
+    fun init(controller: NavHostController)
 }
 
 @Singleton
-class AppNavigationManager @Inject constructor() : NavigationManager {
+class AppNavigationManager @Inject constructor() : NavigationManager, NavigationInitializer {
 
     lateinit var controller: NavHostController
 
-    override fun navigateToHome(userName: String) {
-        controller.navigate(NavScreen.Home.build(userName))
+    override fun init(controller: NavHostController) {
+        this.controller = controller
     }
 
-    override fun navigateToLogin() {
-        controller.navigate(NavScreen.Login.route)
+    override fun navigateToChat() {
+        controller.navigate(AppRoute.CHAT)
     }
 
-    override fun navigateBack() {
-        controller.navigateUp()
-    }
-
-    override fun navigateToSettings(userName: String) {
-        controller.navigate(NavScreen.Settings.build(userName))
+    override fun navigateToSettings() {
+        controller.navigate(AppRoute.SETTINGS)
     }
 }

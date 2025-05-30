@@ -23,13 +23,15 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.kjursa.android.hikornel.NavigationManager
+import com.kjursa.android.hikornel.app.presentation.widget.Card
+import com.kjursa.android.hikornel.app.presentation.widget.PrimarySkill
+import com.kjursa.android.hikornel.app.presentation.widget.Skill
 import com.kjursa.android.hikornel.arch.BaseInteraction
 import com.kjursa.android.hikornel.arch.BaseScreen
 import com.kjursa.android.hikornel.arch.BaseViewModel
 import com.kjursa.android.hikornel.arch.BaseViewState
 import com.kjursa.android.hikornel.arch.ViewStateProvider
 import com.kjursa.android.hikornel.arch.viewStateProvider
-import com.kjursa.android.hikornel.ui.theme.PurpleGrey40
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
 
@@ -55,6 +57,7 @@ data class HomeViewState(
 
 interface HomeInteraction : BaseInteraction {
     fun onClickedScreen(name: String)
+    fun onAboutMeCardClicked()
 }
 
 
@@ -67,6 +70,10 @@ internal class HomeViewModel(
 
     override fun onClickedScreen(name: String) {
 
+    }
+
+    override fun onAboutMeCardClicked() {
+        navigationManager.navigateToChat()
     }
 }
 
@@ -107,16 +114,46 @@ fun HomeScreenContent(state: HomeViewState, interaction: HomeInteraction) {
 
         Text(text = "I'm Kornel", style = MaterialTheme.typography.displayLarge)
 
+        Row(
+            modifier = Modifier.padding(top = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            PrimarySkill(name = "Android Developer")
+        }
+        Row(
+            modifier = Modifier.padding(top = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Skill(name = "Kotlin")
+            Skill(name = "Jetpack Compose")
+        }
+        Row(
+            modifier = Modifier.padding(top = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Skill(name = "Coroutines")
+            Skill(name = "Clean architecture")
+        }
+
+
         Spacer(modifier = Modifier.weight(1f))
-        Divider()
+        Card(
+            title = "About me",
+            body = "I'm Android developer, specializing in Kotlin, Jetpack Compose, Coroutines and clean architecture. Let's talk with my virtual AI assistant to know more about me",
+            onClick = interaction::onAboutMeCardClicked
+        )
+        Spacer(modifier = Modifier.weight(1f))
+
         Spacer(modifier = Modifier.size(64.dp))
     }
 }
 
 @Composable
 fun Divider() {
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .height(1.dp)
-        .background(Color.Green))
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(1.dp)
+            .background(Color.Green)
+    )
 }

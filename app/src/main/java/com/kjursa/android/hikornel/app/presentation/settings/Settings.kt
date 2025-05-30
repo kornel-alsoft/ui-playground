@@ -1,4 +1,4 @@
-package com.kjursa.android.hikornel.app.presentation.main.contact
+package com.kjursa.android.hikornel.app.presentation.settings
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -9,10 +9,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -20,10 +22,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
-import com.kjursa.android.hikornel.NavigationManager
-import com.kjursa.android.hikornel.app.presentation.main.home.HomeInteraction
-import com.kjursa.android.hikornel.app.presentation.main.home.HomeScreenContent
-import com.kjursa.android.hikornel.app.presentation.main.home.HomeViewState
 import com.kjursa.android.hikornel.arch.BaseInteraction
 import com.kjursa.android.hikornel.arch.BaseScreen
 import com.kjursa.android.hikornel.arch.BaseViewModel
@@ -31,57 +29,58 @@ import com.kjursa.android.hikornel.arch.BaseViewState
 import com.kjursa.android.hikornel.arch.ViewStateProvider
 import com.kjursa.android.hikornel.arch.viewStateProvider
 import com.kjursa.android.hikornel.ui.theme.Purple40
+import com.kjursa.android.hikornel.ui.theme.icons.MyIconPack
+import com.kjursa.android.hikornel.ui.theme.icons.myiconpack.Moon
+import com.kjursa.android.hikornel.ui.theme.icons.myiconpack.Sun
+import com.kjursa.android.hikornel.app.presentation.widget.AnimatedIconSwitch
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
 
-internal class ContactScreen @Inject constructor(
-    factory: ContactViewModelFactory,
-): BaseScreen<ContactViewState, ContactInteraction, ContactViewModel>(
+internal class SettingsScreen @Inject constructor(
+    factory: SettingsViewModelFactory,
+): BaseScreen<SettingsViewState, SettingsInteraction, SettingsViewModel>(
     viewModelFactory = factory,
-    viewModelClass = ContactViewModel::class
+    viewModelClass = SettingsViewModel::class
 ) {
     @Composable
     override fun Content(
-        viewState: ContactViewState,
-        interaction: ContactInteraction
+        viewState: SettingsViewState,
+        interaction: SettingsInteraction
     ) {
-        ContactScreenContent(viewState, interaction)
+        SettingsScreenContent(viewState, interaction)
     }
 }
 
 @Parcelize
-data class ContactViewState(
+data class SettingsViewState(
     val name: String = "",
 ) : BaseViewState
 
-interface ContactInteraction : BaseInteraction {
+interface SettingsInteraction : BaseInteraction {
     fun onClickedScreen(name: String)
 }
 
 
-internal class ContactViewModel(
-    private val navigationManager: NavigationManager,
-    viewStateProvider: ViewStateProvider<ContactViewState>
-) : BaseViewModel<ContactViewState, ContactInteraction>(
+internal class SettingsViewModel(
+    viewStateProvider: ViewStateProvider<SettingsViewState>
+) : BaseViewModel<SettingsViewState, SettingsInteraction>(
     viewStateProvider = viewStateProvider
-), ContactInteraction {
+), SettingsInteraction {
 
     override fun onClickedScreen(name: String) {
 
     }
 }
 
-class ContactViewModelFactory @Inject constructor(
-    private val navigationManager: NavigationManager
+class SettingsViewModelFactory @Inject constructor(
 ) : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
-        if (modelClass.isAssignableFrom(ContactViewModel::class.java)) {
+        if (modelClass.isAssignableFrom(SettingsViewModel::class.java)) {
             val savedState = extras.createSavedStateHandle()
-            val initial = ContactViewState(name = "Contact")
-            return ContactViewModel(
-                navigationManager,
+            val initial = SettingsViewState(name = "Settings")
+            return SettingsViewModel(
                 viewStateProvider = viewStateProvider(initial, savedState)
             ) as T
         }
@@ -90,7 +89,7 @@ class ContactViewModelFactory @Inject constructor(
 }
 
 @Composable
-fun ContactScreenContent(state: ContactViewState, interaction: ContactInteraction) {
+fun SettingsScreenContent(state: SettingsViewState, interaction: SettingsInteraction) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
@@ -105,9 +104,14 @@ fun ContactScreenContent(state: ContactViewState, interaction: ContactInteractio
         Box(Modifier.fillMaxWidth().height(80.dp).padding(16.dp).background(Purple40))
         Spacer(modifier = Modifier.weight(1f))
 
-        OutlinedButton(onClick = { interaction.onClickedScreen("test") }) {
-            Text(text = "Test")
-        }
+        var isLightModeOn by remember { mutableStateOf(false) }
+        AnimatedIconSwitch(
+            checked = isLightModeOn,
+            onCheckedChange = { isLightModeOn = it },
+            imageOn = MyIconPack.Sun,
+            imageOff = MyIconPack.Moon,
+        )
+
         Spacer(modifier = Modifier.weight(1f))
     }
 }

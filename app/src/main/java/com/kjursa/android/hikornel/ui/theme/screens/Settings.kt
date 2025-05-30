@@ -55,7 +55,7 @@ internal class SettingsViewModel(
     }
 
     override fun onCloseClick() {
-        navigationManager.navigateBack()
+//        navigationManager.navigateBack()
     }
 
     override fun onCleared() {

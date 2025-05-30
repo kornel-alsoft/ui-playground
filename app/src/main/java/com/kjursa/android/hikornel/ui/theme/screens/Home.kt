@@ -47,11 +47,11 @@ internal class HomeViewModel(
 ), HomeInteraction {
 
     override fun onSettingsClicked() {
-        navigationManager.navigateToSettings(viewState.username)
+//        navigationManager.navigateToSettings(viewState.username)
     }
 
     override fun onCloseClick() {
-        navigationManager.navigateBack()
+//        navigationManager.navigateBack()
     }
 
     override fun name(): String {

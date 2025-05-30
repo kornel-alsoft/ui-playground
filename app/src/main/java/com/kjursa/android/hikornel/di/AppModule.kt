@@ -1,6 +1,7 @@
 package com.kjursa.android.hikornel.di
 
 import com.kjursa.android.hikornel.AppNavigationManager
+import com.kjursa.android.hikornel.NavigationInitializer
 import com.kjursa.android.hikornel.NavigationManager
 import dagger.Binds
 import dagger.Module
@@ -17,8 +18,10 @@ internal interface AppModule {
     fun provideRepository(impl: AndroidWelcomeMessageProvider): WelcomeMessageProvider
 
     @Binds
-    @Singleton
     fun provideNavigationManager(impl: AppNavigationManager): NavigationManager
+
+    @Binds
+    fun provideNavigationInitializer(impl: AppNavigationManager): NavigationInitializer
 }
 
 interface WelcomeMessageProvider {

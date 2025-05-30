@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">HiKornel</string>
+
+    <string name="contact_title">"Contact me"</string>
+    <string name="contact_name_title">"Your name?"</string>
+    <string name="contact_email_title">"Your email?"</string>
+    <string name="contact_project_title">"Tell me about your project"</string>
+    <string name="contact_send">"Send"</string>
 </resources>

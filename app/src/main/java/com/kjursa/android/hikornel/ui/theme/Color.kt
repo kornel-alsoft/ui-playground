@@ -12,3 +12,7 @@ val Pink40 = Color(0xFF7D5260)
 
 val BackgroundSun = Color(0xFFFCB300)
 val BackgroundMoon = Color(0xFFdbdce0)
+
+val CardBackground = Color(0xFF03fd74)
+val PrimarySkillBackground = Color(0xFFf4d245)
+val SkillBackground = Color(0xff1c1c1c)

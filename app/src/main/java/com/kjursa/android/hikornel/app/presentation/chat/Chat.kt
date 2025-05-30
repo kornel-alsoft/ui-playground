@@ -1,13 +1,9 @@
-package com.kjursa.android.hikornel.app.presentation.app.settings
+package com.kjursa.android.hikornel.app.presentation.chat
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -22,65 +18,65 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
+import com.kjursa.android.hikornel.app.presentation.main.home.Divider
 import com.kjursa.android.hikornel.arch.BaseInteraction
 import com.kjursa.android.hikornel.arch.BaseScreen
 import com.kjursa.android.hikornel.arch.BaseViewModel
 import com.kjursa.android.hikornel.arch.BaseViewState
 import com.kjursa.android.hikornel.arch.ViewStateProvider
 import com.kjursa.android.hikornel.arch.viewStateProvider
-import com.kjursa.android.hikornel.ui.theme.Purple40
 import com.kjursa.android.hikornel.ui.theme.icons.MyIconPack
 import com.kjursa.android.hikornel.ui.theme.icons.myiconpack.Moon
 import com.kjursa.android.hikornel.ui.theme.icons.myiconpack.Sun
-import com.kjursa.android.hikornel.ui.theme.widget.AnimatedIconSwitch
+import com.kjursa.android.hikornel.app.presentation.widget.AnimatedIconSwitch
 import kotlinx.parcelize.Parcelize
 import javax.inject.Inject
 
-internal class SettingsScreen @Inject constructor(
-    factory: SettingsViewModelFactory,
-): BaseScreen<SettingsViewState, SettingsInteraction, SettingsViewModel>(
+internal class ChatScreen @Inject constructor(
+    factory: ChatViewModelFactory,
+): BaseScreen<ChatViewState, ChatInteraction, ChatViewModel>(
     viewModelFactory = factory,
-    viewModelClass = SettingsViewModel::class
+    viewModelClass = ChatViewModel::class
 ) {
     @Composable
     override fun Content(
-        viewState: SettingsViewState,
-        interaction: SettingsInteraction
+        viewState: ChatViewState,
+        interaction: ChatInteraction
     ) {
-        SettingsScreenContent(viewState, interaction)
+        ChatScreenContent(viewState, interaction)
     }
 }
 
 @Parcelize
-data class SettingsViewState(
+data class ChatViewState(
     val name: String = "",
 ) : BaseViewState
 
-interface SettingsInteraction : BaseInteraction {
+interface ChatInteraction : BaseInteraction {
     fun onClickedScreen(name: String)
 }
 
 
-internal class SettingsViewModel(
-    viewStateProvider: ViewStateProvider<SettingsViewState>
-) : BaseViewModel<SettingsViewState, SettingsInteraction>(
+internal class ChatViewModel(
+    viewStateProvider: ViewStateProvider<ChatViewState>
+) : BaseViewModel<ChatViewState, ChatInteraction>(
     viewStateProvider = viewStateProvider
-), SettingsInteraction {
+), ChatInteraction {
 
     override fun onClickedScreen(name: String) {
 
     }
 }
 
-class SettingsViewModelFactory @Inject constructor(
+class ChatViewModelFactory @Inject constructor(
 ) : ViewModelProvider.Factory {
 
     @Suppress("UNCHECKED_CAST")
     override fun <T : ViewModel> create(modelClass: Class<T>, extras: CreationExtras): T {
-        if (modelClass.isAssignableFrom(SettingsViewModel::class.java)) {
+        if (modelClass.isAssignableFrom(ChatViewModel::class.java)) {
             val savedState = extras.createSavedStateHandle()
-            val initial = SettingsViewState(name = "Settings")
-            return SettingsViewModel(
+            val initial = ChatViewState(name = "Chat")
+            return ChatViewModel(
                 viewStateProvider = viewStateProvider(initial, savedState)
             ) as T
         }
@@ -89,19 +85,24 @@ class SettingsViewModelFactory @Inject constructor(
 }
 
 @Composable
-fun SettingsScreenContent(state: SettingsViewState, interaction: SettingsInteraction) {
+fun ChatScreenContent(state: ChatViewState, interaction: ChatInteraction) {
     Column(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier.fillMaxSize().padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        Spacer(modifier = Modifier.weight(1f))
         Text(
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            text = "${state.name} screen"
+            text = "Kornel Jursa"
         )
-        Box(Modifier.fillMaxWidth().height(80.dp).padding(16.dp).background(Purple40))
+        Divider()
+        Text(
+            text = "kornel.jursa@gmail.com"
+        )
+        Divider()
+        Text(
+            text = "www.kjursa.com"
+        )
         Spacer(modifier = Modifier.weight(1f))
 
         var isLightModeOn by remember { mutableStateOf(false) }

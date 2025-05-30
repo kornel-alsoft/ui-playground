@@ -1,4 +1,4 @@
-package com.kjursa.android.hikornel.ui.theme.widget
+package com.kjursa.android.hikornel.app.presentation.widget
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.core.animateFloatAsState
@@ -150,8 +150,8 @@ fun rememberAnimatedIconSwitchStyle(
     iconOffTint: Color = Color.DarkGray,
     thumbOnColor: Color = Color.White,
     thumbOffColor: Color = Color.White,
-    backgroundOnColor: Color = BackgroundOff,
-    backgroundOffColor: Color = BackgroundOn,
+    backgroundOnColor: Color = BackgroundOn,
+    backgroundOffColor: Color = BackgroundOff,
 ): AnimatedIconSwitchStyle = remember(
     iconOnTint, iconOffTint, thumbOnColor, thumbOffColor, backgroundOnColor, backgroundOffColor
 ) {
