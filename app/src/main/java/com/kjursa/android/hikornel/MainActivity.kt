@@ -8,6 +8,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import com.kjursa.android.hikornel.app.presentation.app.AppScreen
 import com.kjursa.android.hikornel.ui.theme.HiKornelTheme
@@ -25,6 +28,9 @@ internal class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
+
+        window.statusBarColor = Color(0xFF1B4332).toArgb() // leśna zieleń
+        WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = false // białe ikony
 
         setContent {
             HiKornelTheme {

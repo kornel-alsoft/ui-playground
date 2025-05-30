@@ -102,23 +102,27 @@ fun HomeScreenContent(state: HomeViewState, interaction: HomeInteraction) {
             .fillMaxSize()
             .padding(horizontal = 16.dp),
     ) {
-        Spacer(modifier = Modifier.size(16.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Box(modifier = Modifier.size(80.dp))
-            Text(text = "Hey,", style = MaterialTheme.typography.displayLarge)
-        }
-
+//        Spacer(modifier = Modifier.size(16.dp))
+//        Row(
+//            modifier = Modifier.fillMaxWidth(),
+//            verticalAlignment = Alignment.CenterVertically,
+//            horizontalArrangement = Arrangement.spacedBy(16.dp)
+//        ) {
+//            Box(modifier = Modifier.size(80.dp))
+//            Text(text = "Hey,", style = MaterialTheme.typography.displayLarge)
+//        }
+        Text(
+            text = "Hi,",
+            modifier = Modifier.padding(start = 100.dp),
+            style = MaterialTheme.typography.displayLarge
+        )
         Text(text = "I'm Kornel", style = MaterialTheme.typography.displayLarge)
 
         Row(
             modifier = Modifier.padding(top = 16.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            PrimarySkill(name = "Android Developer")
+            PrimarySkill(name = "Senior Android Developer")
         }
         Row(
             modifier = Modifier.padding(top = 16.dp),

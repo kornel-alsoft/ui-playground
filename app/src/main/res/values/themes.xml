@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.HiKornel" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.HiKornel" parent="android:Theme.Material.Light.NoActionBar">
+        <!-- status bar -->
+        <item name="android:statusBarColor">#1B4332</item>
+
+        <!-- navigation bar (opcjonalnie) -->
+        <item name="android:navigationBarColor">#1B4332</item>
+    </style>
 </resources>
