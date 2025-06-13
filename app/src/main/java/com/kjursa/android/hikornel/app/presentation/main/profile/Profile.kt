@@ -3,14 +3,17 @@ package com.kjursa.android.hikornel.app.presentation.main.profile
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -21,15 +24,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.kjursa.android.hikornel.NavigationManager
+import com.kjursa.android.hikornel.app.presentation.theme.AppTheme
 import com.kjursa.android.hikornel.arch.BaseInteraction
 import com.kjursa.android.hikornel.arch.BaseScreen
 import com.kjursa.android.hikornel.arch.BaseViewModel
@@ -108,98 +115,97 @@ fun ProfileScreenContent(state: ProfileViewState, interaction: ProfileInteractio
             .fillMaxSize()
             .padding(horizontal = 16.dp),
     ) {
+        Spacer(modifier = Modifier.padding(top = 48.dp))
         Spacer(modifier = Modifier.padding(top = 16.dp))
         ContactIcons()
         Spacer(modifier = Modifier.padding(top = 16.dp))
 
-
-        Text(
-            text = "Kornel Jursa",
-            style = MaterialTheme.typography.displaySmall
-        )
-        Text(
-            text = "Senior Android Developer",
-            style = MaterialTheme.typography.titleLarge,
-            fontStyle = FontStyle.Italic
-        )
         Spacer(modifier = Modifier.padding(top = 16.dp))
 
-        HorizontalDivider(color = CardBackground)
+        HorizontalDivider(color = MaterialTheme.colorScheme.primary)
         Text(
             style = MaterialTheme.typography.titleMedium,
             text = "About me",
             modifier = Modifier.padding(vertical = 12.dp)
         )
-        HorizontalDivider(color = CardBackground)
+        HorizontalDivider(color = MaterialTheme.colorScheme.primary)
         Text(
             style = MaterialTheme.typography.titleMedium,
             text = "My experience",
             modifier = Modifier.padding(vertical = 12.dp)
         )
-        HorizontalDivider(color = CardBackground)
+        HorizontalDivider(color = MaterialTheme.colorScheme.primary)
         Text(
             style = MaterialTheme.typography.titleMedium,
             text = "Contact me",
             modifier = Modifier.padding(vertical = 12.dp)
         )
-        HorizontalDivider(color = CardBackground)
+        HorizontalDivider(color = MaterialTheme.colorScheme.primary)
         Text(
             style = MaterialTheme.typography.titleMedium,
             text = "Let's talk",
             modifier = Modifier.padding(vertical = 12.dp)
         )
-        HorizontalDivider(color = CardBackground)
+        HorizontalDivider(color = MaterialTheme.colorScheme.primary)
         Text(
             style = MaterialTheme.typography.titleMedium,
             text = "Settings",
             modifier = Modifier.padding(vertical = 12.dp)
         )
-        HorizontalDivider(color = CardBackground)
+        HorizontalDivider(color = MaterialTheme.colorScheme.primary)
+
     }
 }
 
 @Composable
 private fun ContactIcons() {
+
+    ContactItem(
+        value = "kornel.jursa@gmail.com",
+        image = MyIconPack.Email
+    )
+
+    Spacer(modifier = Modifier.size(16.dp))
+
+    ContactItem(
+        value = "+48 600 823 720",
+        image = MyIconPack.Chat
+    )
+    Spacer(modifier = Modifier.size(16.dp))
+
+    ContactItem(
+        value = "linkedin.com/n/kjursa",
+        image = MyIconPack.Text
+    )
+
+}
+
+@Composable
+private fun ContactItem(
+    value: String,
+    image: ImageVector
+) {
+
     Row(
-        modifier = Modifier
-            .fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically
     ) {
-        Spacer(modifier = Modifier.weight(1f))
         Icon(
-            imageVector = MyIconPack.Email,
+            imageVector = image,
             tint = Color.Black,
             contentDescription = null,
             modifier = Modifier
-
-                .background(Color.LightGray, CircleShape)
-                .border(1.dp, Color.Black, CircleShape)
+                .background(AppTheme.colors.cardBackgroundPrimary, CircleShape)
+                .border(1.dp, MaterialTheme.colorScheme.primary, CircleShape)
                 .size(40.dp)
                 .padding(10.dp)
         )
-        Spacer(modifier = Modifier.weight(1f))
-        Icon(
-            imageVector = MyIconPack.Chat,
-            tint = Color.Black,
-            contentDescription = null,
-            modifier = Modifier
-
-                .background(Color.LightGray, CircleShape)
-                .border(1.dp, Color.Black, CircleShape)
-                .size(40.dp)
-                .padding(10.dp)
+        Text(
+            modifier = Modifier.padding(start = 8.dp),
+            text = value,
+            style = MaterialTheme.typography.bodyLarge,
+            fontWeight = FontWeight.Bold
         )
-        Spacer(modifier = Modifier.weight(1f))
-        Icon(
-            imageVector = MyIconPack.Text,
-            tint = Color.Black,
-            contentDescription = null,
-            modifier = Modifier
-                .background(Color.LightGray, CircleShape)
-                .border(1.dp, Color.Black, CircleShape)
-                .size(40.dp)
-                .padding(10.dp)
-        )
-        Spacer(modifier = Modifier.weight(1f))
     }
+
 }

@@ -11,10 +11,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -23,6 +24,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.kjursa.android.hikornel.NavigationManager
+import com.kjursa.android.hikornel.app.presentation.theme.AppTheme
 import com.kjursa.android.hikornel.app.presentation.widget.Card
 import com.kjursa.android.hikornel.app.presentation.widget.PrimarySkill
 import com.kjursa.android.hikornel.app.presentation.widget.Skill
@@ -33,6 +35,7 @@ import com.kjursa.android.hikornel.arch.BaseViewState
 import com.kjursa.android.hikornel.arch.ViewStateProvider
 import com.kjursa.android.hikornel.arch.viewStateProvider
 import kotlinx.parcelize.Parcelize
+import java.util.ArrayDeque
 import javax.inject.Inject
 
 internal class HomeScreen @Inject constructor(
@@ -100,6 +103,7 @@ fun HomeScreenContent(state: HomeViewState, interaction: HomeInteraction) {
     Column(
         modifier = Modifier
             .fillMaxSize()
+            .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp),
     ) {
 //        Spacer(modifier = Modifier.size(16.dp))
@@ -112,8 +116,8 @@ fun HomeScreenContent(state: HomeViewState, interaction: HomeInteraction) {
 //            Text(text = "Hey,", style = MaterialTheme.typography.displayLarge)
 //        }
         Text(
-            text = "Hi,",
-            modifier = Modifier.padding(start = 100.dp),
+            text = "Hello,",
+            modifier = Modifier.padding(start = 0.dp),
             style = MaterialTheme.typography.displayLarge
         )
         Text(text = "I'm Kornel", style = MaterialTheme.typography.displayLarge)
@@ -140,13 +144,31 @@ fun HomeScreenContent(state: HomeViewState, interaction: HomeInteraction) {
         }
 
 
-        Spacer(modifier = Modifier.weight(1f))
+//        Spacer(modifier = Modifier.weight(1f))
+        Spacer(modifier = Modifier.size(16.dp))
         Card(
             title = "About me",
-            body = "I'm Android developer, specializing in Kotlin, Jetpack Compose, Coroutines and clean architecture. Let's talk with my virtual AI assistant to know more about me",
+            body = "I'm Kornel, Android Developer specializing in Kotlin, Jetpack Compose, Coroutines and clean architecture. Let's talk with my virtual AI assistant to know more about me",
+            color = AppTheme.colors.cardBackgroundPrimary,
             onClick = interaction::onAboutMeCardClicked
         )
-        Spacer(modifier = Modifier.weight(1f))
+
+        Spacer(modifier = Modifier.size(16.dp))
+        Card(
+            title = "My Experience",
+            body = "Android developer with over 10 years in Android development. I have been working with interanational teams",
+            color = AppTheme.colors.cardBackgroundPrimary,
+            onClick = interaction::onAboutMeCardClicked
+        )
+
+        Spacer(modifier = Modifier.size(16.dp))
+        Card(
+            title = "Let's talk",
+            body = "My virtual AI assistant can answer your questions. Let's talk. ",
+            color = AppTheme.colors.cardBackgroundPrimary,
+            onClick = interaction::onAboutMeCardClicked
+        )
+//        Spacer(modifier = Modifier.weight(1f))
 
         Spacer(modifier = Modifier.size(64.dp))
     }

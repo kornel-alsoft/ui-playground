@@ -23,15 +23,20 @@ import com.kjursa.android.hikornel.ui.theme.icons.myiconpack.Message
 fun Card(
     title: String,
     body: String,
+    color: Color,
     onClick: () -> Unit,
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = CardBackground,
+            containerColor = color,
             contentColor = Color.Black
         ),
-        onClick = onClick
+        onClick = onClick,
+        elevation = CardDefaults.cardElevation(
+            defaultElevation = 8.dp,
+            pressedElevation = 4.dp
+        )
     ) {
         Row(
             modifier = Modifier

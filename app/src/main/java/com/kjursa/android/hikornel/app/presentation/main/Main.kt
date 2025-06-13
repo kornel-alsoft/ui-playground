@@ -13,6 +13,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -25,9 +26,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -36,7 +41,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.BlurredEdgeTreatment
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
@@ -46,6 +53,8 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -59,6 +68,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import com.kjursa.android.hikornel.NavigationManager
 import com.kjursa.android.hikornel.app.presentation.main.contact.ContactScreen
 import com.kjursa.android.hikornel.app.presentation.main.home.HomeScreen
@@ -80,6 +90,7 @@ import com.kjursa.android.hikornel.ui.theme.icons.myiconpack.Email
 import com.kjursa.android.hikornel.ui.theme.icons.myiconpack.Home
 import com.kjursa.android.hikornel.ui.theme.icons.myiconpack.Settings
 import com.kjursa.android.hikornel.ui.theme.icons.myiconpack.Text
+import kotlinx.serialization.Serializable
 
 @Parcelize
 data class MainViewState(
@@ -155,6 +166,7 @@ internal class MainScreen @Inject constructor(
         MainScreenContent(viewState, interaction)
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     fun MainScreenContent(state: MainViewState, interaction: MainInteraction) {
 
@@ -163,9 +175,9 @@ internal class MainScreen @Inject constructor(
         val route = navBackStackEntry?.destination?.route ?: ""
         val avatarProgress by animateFloatAsState(
             targetValue = when (route) {
-                "" -> if (state.prevRoute == "home") 1f else 0f
-                "home" -> 1f
-                else -> 0f
+                "" -> if (state.prevRoute == "home") 0f else 1f
+                "home" -> 0f
+                else -> 1f
             },
             animationSpec = tween()
         )
@@ -180,7 +192,7 @@ internal class MainScreen @Inject constructor(
             ) {
                 NavHost(navController = navController, startDestination = "home") {
                     composable(
-                        "home",
+                        route = "home",
                         enterTransition = {
                             if (state.prevRoute != "home") {
                                 interaction.onEnterScreen("home")
@@ -228,11 +240,15 @@ internal class MainScreen @Inject constructor(
                 }
             }
 
+
+
             Toolbar(
                 avatarProgress,
                 onSettingsClicked = interaction::onSettingsClicked,
                 onChatClicked = interaction::onChatClicked
             )
+
+
 
             NavigationContent(
                 modifier = Modifier.align(Alignment.BottomCenter),
@@ -253,63 +269,106 @@ internal class MainScreen @Inject constructor(
 
 private fun slideOutLeft(): ExitTransition =
     slideOut(
-        targetOffset = { fullSize -> IntOffset(-fullSize.width / 3, 0) }
+        targetOffset = { fullSize -> IntOffset(-fullSize.width / 2, 0) }
     ) + fadeOut()
 
 private fun slideOutRight(): ExitTransition =
     slideOut(
-        targetOffset = { fullSize -> IntOffset(fullSize.width / 3, 0) }
+        targetOffset = { fullSize -> IntOffset(fullSize.width / 2, 0) }
     ) + fadeOut()
 
 private fun slideInLeft(): EnterTransition =
     slideIn(
-        initialOffset = { fullSize -> IntOffset(-fullSize.width / 3, 0) }
+        initialOffset = { fullSize -> IntOffset(-fullSize.width / 2, 0) }
     ) + fadeIn()
 
 private fun slideInRight(): EnterTransition =
     slideIn(
-        initialOffset = { fullSize -> IntOffset(fullSize.width / 3, 0) }
+        initialOffset = { fullSize -> IntOffset(fullSize.width / 2, 0) }
     ) + fadeIn()
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Toolbar(
     progress: Float,
     onSettingsClicked: () -> Unit,
     onChatClicked: () -> Unit,
 ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp)
-                .background(MainBackground)
-        ) {
-            Row(modifier = Modifier.align(Alignment.CenterEnd)) {
-                Icon(
-                    imageVector = MyIconPack.Settings,
-                    tint = lerp(Color.Black, Color.Black, progress),
-                    contentDescription = null,
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(24.dp))
-                        .clickable { onSettingsClicked() }
-                        .padding(horizontal = 2.dp)
-                        .size(40.dp)
-                        .padding(10.dp)
-                )
-            }
+
+
+//    Box(
+//        Modifier
+//            .padding(top = 48.dp + 48.dp.times(progress))
+//            .fillMaxWidth()
+//            .height(8.dp)
+//            .background(
+//                brush = Brush.verticalGradient(
+//                    colors = listOf(
+//                        Color.Black.copy(alpha = 0.2f),
+//                        Color.Transparent
+//                    )
+//                )
+//            )
+//    )
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp + 48.dp.times(progress))
+            .background(MaterialTheme.colorScheme.primary)
+    ) {
+        Row(modifier = Modifier.align(Alignment.CenterEnd)) {
+            Icon(
+                imageVector = MyIconPack.Settings,
+                tint = lerp(Color.Black, Color.Black, progress),
+                contentDescription = null,
+                modifier = Modifier
+                    .clip(RoundedCornerShape(24.dp))
+                    .clickable { onSettingsClicked() }
+                    .padding(horizontal = 2.dp)
+                    .size(40.dp)
+                    .padding(10.dp)
+            )
         }
+    }
 //    }
 
-    Icon(
-        painter = painterResource(id = R.drawable.cropped_image),
-        tint = Color.Unspecified,
-        contentDescription = null,
-        modifier = Modifier
-            .padding(horizontal = 16.dp, vertical = 4.dp)
-            .border(1.dp, Color.Black, CircleShape)
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            painter = painterResource(id = R.drawable.cropped_image),
+            tint = Color.Unspecified,
+            contentDescription = null,
+            modifier = Modifier
+                .padding(horizontal = 16.dp, vertical = 4.dp)
+                .border(1.dp, Color.Black, CircleShape)
 //            .offset(y = 12.dp.times(progress))
-            .size(40.dp + 48.dp.times(progress))
+                .size(40.dp + 48.dp.times(progress))
 //            .size(88.dp)
-    )
+        )
+        Column(
+            modifier = Modifier.alpha(lateProgress(progress))
+        ) {
+            Text(
+                text = "Kornel Jursa",
+                style = MaterialTheme.typography.headlineLarge,
+            )
+            Text(
+                text = "Android Developer",
+                style = MaterialTheme.typography.headlineSmall,
+            )
+        }
+    }
+
+
+}
+
+fun lateProgress(progress: Float): Float {
+    if (progress <= 0.5f) return 0f
+    val value = progress - 0.5f
+    return value / 0.5f
 }
 
 @Composable
@@ -324,14 +383,14 @@ fun NavigationContent(
             .padding(4.dp)
             .height(40.dp)
             .width(224.dp)
+//            .blur(50.dp, edgeTreatment = BlurredEdgeTreatment(RoundedCornerShape(24.dp)))
             .background(
                 brush = Brush.verticalGradient(
-                    colors = listOf(Color.DarkGray, Color.DarkGray) //, Color(0xFF555555))
+                    colors = listOf(Color(0xE6444444), Color(0xE6444444)) //, Color(0xFF555555))
                 ),
-                shape = RoundedCornerShape(24.dp)
+                shape = RoundedCornerShape(16.dp)
             )
 //            .padding(4.dp)
-        ,
     ) {
 
         val highlightStart = remember { Animatable(0f) }
@@ -398,10 +457,6 @@ internal fun NavigationIcons(route: String, onClick: (String) -> Unit, onChatCli
         targetValue = if (route == "home") 0f else 1f,
         animationSpec = tween()
     )
-    val profileProgress by animateFloatAsState(
-        targetValue = if (route == "profile") 0f else 1f,
-        animationSpec = tween()
-    )
     val contactProgress by animateFloatAsState(
         targetValue = if (route == "contact") 0f else 1f,
         animationSpec = tween()
@@ -435,16 +490,16 @@ internal fun ChatIcon(
     Box(
         modifier = Modifier
             .size(52.dp)
-            .clip(CircleShape)
-            .background(Color.DarkGray)
+//            .clip(CircleShape)
+            .background(Color.Transparent)
             .clickable { onClick() }
             .padding(4.dp)
     ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .clip(CircleShape)
-                .background(MainBackground)
+//                .clip(CircleShape)
+                .background(MaterialTheme.colorScheme.primary, RoundedCornerShape(16.dp))
         ) {
             Icon(
                 imageVector = MyIconPack.Chat,
@@ -470,7 +525,7 @@ internal fun NavigationIcon(
         tint = tint,
         contentDescription = null,
         modifier = Modifier
-            .clip(RoundedCornerShape(24.dp))
+            .clip(RoundedCornerShape(16.dp))
             .clickable { onClick() }
             .padding(horizontal = 16.dp)
             .size(40.dp)
@@ -513,3 +568,6 @@ internal fun ContactNavigationIcon(
         onClick = onClick
     )
 }
+
+@Serializable
+object ScreenHome

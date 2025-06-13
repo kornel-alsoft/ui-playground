@@ -13,7 +13,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
 import com.kjursa.android.hikornel.app.presentation.app.AppScreen
-import com.kjursa.android.hikornel.ui.theme.HiKornelTheme
+import com.kjursa.android.hikornel.app.presentation.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -29,11 +29,12 @@ internal class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
-        window.statusBarColor = Color(0xFF1B4332).toArgb() // leśna zieleń
-        WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars = false // białe ikony
+        window.statusBarColor = Color(0xFF00C896).toArgb() // leśna zieleń
+        WindowCompat.getInsetsController(window, window.decorView).isAppearanceLightStatusBars =
+            true // białe ikony
 
         setContent {
-            HiKornelTheme {
+            AppTheme {
                 Scaffold { padding ->
                     Column(modifier = Modifier.padding(padding)) {
 
@@ -44,11 +45,6 @@ internal class MainActivity : ComponentActivity() {
             }
         }
     }
-
-
-
-
-
 }
 
 internal object AppRoute {
