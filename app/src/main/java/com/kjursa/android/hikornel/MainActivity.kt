@@ -19,7 +19,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @AndroidEntryPoint
-internal class MainActivity : ComponentActivity() {
+internal class MainActivity : BaseActivity() {
 
 
     @Inject

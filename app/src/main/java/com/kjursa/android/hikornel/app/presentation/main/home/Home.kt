@@ -1,5 +1,6 @@
 package com.kjursa.android.hikornel.app.presentation.main.home
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,6 +26,7 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.kjursa.android.hikornel.NavigationManager
 import com.kjursa.android.hikornel.app.presentation.theme.AppTheme
+import com.kjursa.android.hikornel.app.presentation.theme.Dimens
 import com.kjursa.android.hikornel.app.presentation.widget.Card
 import com.kjursa.android.hikornel.app.presentation.widget.PrimarySkill
 import com.kjursa.android.hikornel.app.presentation.widget.Skill
@@ -35,7 +37,6 @@ import com.kjursa.android.hikornel.arch.BaseViewState
 import com.kjursa.android.hikornel.arch.ViewStateProvider
 import com.kjursa.android.hikornel.arch.viewStateProvider
 import kotlinx.parcelize.Parcelize
-import java.util.ArrayDeque
 import javax.inject.Inject
 
 internal class HomeScreen @Inject constructor(
@@ -117,14 +118,14 @@ fun HomeScreenContent(state: HomeViewState, interaction: HomeInteraction) {
 //        }
         Text(
             text = "Hello,",
-            modifier = Modifier.padding(start = 0.dp),
+            modifier = Modifier.padding(top = Dimens.Dot3),
             style = MaterialTheme.typography.displayLarge
         )
         Text(text = "I'm Kornel", style = MaterialTheme.typography.displayLarge)
 
         Row(
-            modifier = Modifier.padding(top = 16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
+            modifier = Modifier.padding(top = Dimens.Dot3),
+            horizontalArrangement = Arrangement.spacedBy(Dimens.Dot2)
         ) {
             PrimarySkill(name = "Senior Android Developer")
         }

@@ -37,6 +37,7 @@ import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.CreationExtras
 import com.kjursa.android.hikornel.NavigationManager
 import com.kjursa.android.hikornel.app.presentation.theme.AppTheme
+import com.kjursa.android.hikornel.app.presentation.theme.Dimens
 import com.kjursa.android.hikornel.arch.BaseInteraction
 import com.kjursa.android.hikornel.arch.BaseScreen
 import com.kjursa.android.hikornel.arch.BaseViewModel
@@ -46,6 +47,7 @@ import com.kjursa.android.hikornel.arch.viewStateProvider
 import com.kjursa.android.hikornel.ui.theme.CardBackground
 import com.kjursa.android.hikornel.ui.theme.MainBackground
 import com.kjursa.android.hikornel.ui.theme.Pink40
+import com.kjursa.android.hikornel.ui.theme.PrimarySkillBackground
 import com.kjursa.android.hikornel.ui.theme.icons.MyIconPack
 import com.kjursa.android.hikornel.ui.theme.icons.myiconpack.Chat
 import com.kjursa.android.hikornel.ui.theme.icons.myiconpack.Email
@@ -195,10 +197,10 @@ private fun ContactItem(
             tint = Color.Black,
             contentDescription = null,
             modifier = Modifier
-                .background(AppTheme.colors.cardBackgroundPrimary, CircleShape)
-                .border(1.dp, MaterialTheme.colorScheme.primary, CircleShape)
-                .size(40.dp)
-                .padding(10.dp)
+                .background(PrimarySkillBackground, CircleShape)
+                .border(Dimens.Border, Color.Black, CircleShape)
+                .size(Dimens.Dot4)
+                .padding(Dimens.Dot)
         )
         Text(
             modifier = Modifier.padding(start = 8.dp),

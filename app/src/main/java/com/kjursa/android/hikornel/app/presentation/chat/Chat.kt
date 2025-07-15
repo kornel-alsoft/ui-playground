@@ -1,10 +1,12 @@
 package com.kjursa.android.hikornel.app.presentation.chat
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,7 +36,7 @@ import javax.inject.Inject
 
 internal class ChatScreen @Inject constructor(
     factory: ChatViewModelFactory,
-): BaseScreen<ChatViewState, ChatInteraction, ChatViewModel>(
+) : BaseScreen<ChatViewState, ChatInteraction, ChatViewModel>(
     viewModelFactory = factory,
     viewModelClass = ChatViewModel::class
 ) {
@@ -87,7 +89,10 @@ class ChatViewModelFactory @Inject constructor(
 @Composable
 fun ChatScreenContent(state: ChatViewState, interaction: ChatInteraction) {
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.primary)
+            .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
